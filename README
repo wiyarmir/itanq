@@ -1,0 +1,5 @@
+Cosas que os hacen falta para compilarlo:
+
+* libsdl-dev
+* libsdl_image-dev
+* libsdl_ttf-dev
