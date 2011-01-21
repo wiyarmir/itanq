@@ -1,0 +1,40 @@
+/* 
+ * File:   bala.h
+ * Author: guillermo
+ *
+ * Created on 25 de marzo de 2009, 18:28
+ */
+
+#ifndef _BALA_H
+#define	_BALA_H
+#ifdef DEB
+#include <iostream>
+using namespace std;
+#endif
+#include "tipos.h"
+#include "tanque.h"
+
+class Bala {
+public:
+    Bala(Uint16 lax, Uint16 lay, SDL_Surface *pantalla, Orientacion ori);
+    Bala(const Bala& orig);
+    virtual ~Bala();
+    Sint16 diX();
+    Sint16 diY();
+    Orientacion diOr();
+    void dibujate(SDL_Surface *pantalla);
+    void mov();
+    bool colision(Tanque* t);
+private:
+    static const Uint8 BW = 10;
+    static const Uint8 BH = 10;
+    SDL_Surface *img;
+
+    Uint8 img_col, img_fil;
+    Sint16 x, y, dx, dy;
+    Orientacion orient;
+};
+
+
+#endif	/* _BALA_H */
+

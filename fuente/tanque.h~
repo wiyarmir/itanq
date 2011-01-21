@@ -1,0 +1,54 @@
+/* 
+ * File:   tanque.h
+ * Author: guillermo
+ *
+ * Created on 25 de marzo de 2009, 18:19
+ */
+
+#ifndef _TANQUE_H
+#define	_TANQUE_H
+#ifdef DEB
+#include <iostream>
+using namespace std;
+#endif
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include "tipos.h"
+
+class Tanque {
+public:
+    Tanque(int j, Uint16 lax, Uint16 lay, SDL_Surface *pantalla);
+    Tanque(const Tanque& orig);
+    virtual ~Tanque();
+    void dibujate(SDL_Surface *pantalla);
+    bool colision(Tanque *t);
+    bool dentro_tabl(Orientacion ori);
+    void mira_arr();
+    void mira_aba();
+    void mira_izq();
+    void mira_der();
+    void ve_arr();
+    void ve_aba();
+    void ve_izq();
+    void ve_der();
+    Sint16 diX();
+    Sint16 diY();
+    Orientacion diOr();
+    void destruir();
+private:
+    static const Uint16 mov = 1;
+    static const Uint16 LIMIX = 0;
+    static const Uint16 LIMSX = 760;
+    static const Uint16 LIMIY = 0;
+    static const Uint16 LIMSY = 560;
+    Sint16 x, y, dx, dy;
+    Uint8 img_col, img_fil;
+    SDL_Surface *img;
+    SDL_Rect corte;
+    Orientacion orient;
+};
+
+
+
+#endif	/* _TANQUE_H */
+

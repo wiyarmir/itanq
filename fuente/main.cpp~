@@ -1,0 +1,136 @@
+/* 
+ * File:   main.cpp
+ * Author: guillermo
+ *
+ * Created on 19 de marzo de 2009, 18:32
+ */
+
+#define JUGADOR 0
+#define ENEMIGO 1
+
+#include <cstdlib>
+#ifdef DEB
+#include <iostream>
+using namespace std;
+#endif
+using namespace std;
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+
+#include "tipos.h"
+#include "tile.h"
+#include "dibujante.h"
+#include "tanque.h"
+#include "control.h"
+
+/*
+ * 
+ */
+
+int main(int argc, char** argv) {
+    ///////////////////Declaración de variables////////////////
+    Tanque *jugador, *enemigo;
+    SDL_Surface *pantalla;
+    SDL_Event evento;
+    Sint32 tiempo_gr, tiempo_ev;
+    bool game = true;
+    ////////////////////inicialización/////////////////////
+#    ifdef DEB
+    cout << "main>Inicializando..." << endl;
+#    endif
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        cerr << "main>Error iniciando interfaz de vídeo: " << SDL_GetError() << endl;
+        exit(1);
+    }
+    atexit(SDL_Quit);
+#    ifdef DEB
+    tiempo_ev = SDL_GetTicks();
+#    endif
+    SDL_WM_SetCaption(NOMBREAPP, NULL); //set del nombre de la ventana e icono
+    SDL_Surface* icono = IMG_Load("icono.png");
+    SDL_WM_SetIcon(icono,NULL);
+    pantalla = SDL_SetVideoMode(RES_W, RES_H, 0, SDL_ANYFORMAT);
+
+    if (pantalla == NULL) {
+        cerr << "<" << SDL_GetTicks() << "main>Modo de vídeo no compatible o erróneo" << endl;
+#        ifdef DEB
+        cout << "main>Error seteando el modo de video!" << endl;
+#        endif
+        exit(1);
+    }
+    // SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); //permito que las teclas se repitan
+    ////////////Pre-Bucle///////////////
+#    ifdef DEB
+    tiempo_gr = SDL_GetTicks();
+    cout << "main>Empleados " << (tiempo_gr - tiempo_ev) << "ms en iniciar el modo de video." << endl;
+    cout << "main>Creando clase ''controlador''..." << endl;
+#    endif
+    Control* controlador = new Control(pantalla, jugador, 70, 500, enemigo, 80, 80); //crea pincel y jugadores
+    /////////////////////////////
+#    ifdef DEB
+    tiempo_ev = SDL_GetTicks();
+    cout << "main>Empleados " << tiempo_ev - tiempo_gr << "ms en crear el controlador." << endl;
+    cout << "main>Entrando en el bucle...." << endl;
+#    endif
+    tiempo_gr = SDL_GetTicks();
+    tiempo_ev = SDL_GetTicks();
+    while (game) {
+        if (SDL_GetTicks() - tiempo_gr >= 30) {//siLimiteGraficos ~30ms
+
+            controlador->pintadas();
+            SDL_Flip(pantalla);
+            tiempo_gr = SDL_GetTicks();
+        }
+        if (SDL_GetTicks() - tiempo_ev >= 5) {//temporizacion//siLimiteEventos ~5ms
+
+            controlador->movimiento();
+            controlador->colisiones();
+            while (SDL_PollEvent(&evento)) {
+                switch (evento.type) {
+                    case SDL_MOUSEBUTTONDOWN:
+                        break;
+                    case SDL_MOUSEBUTTONUP:
+                        break;
+                    case SDL_MOUSEMOTION:
+
+                        break;
+                    case SDL_KEYUP:
+                        controlador->tecla_libre(evento.key.keysym.sym);
+                        break;
+                    case SDL_KEYDOWN:
+                        if (evento.key.keysym.sym == SDLK_ESCAPE) {
+#                            ifdef DEB
+                            cout << "main>Cerrando por ESC" << endl;
+#                            endif
+                            game = false;
+                            break;
+                        } else if (evento.key.keysym.sym == SDLK_f) { // Si pulsamos f pasamos a pantalla completa
+                            if (!SDL_WM_ToggleFullScreen(pantalla)) {
+                                cerr << "main>No se puede pasar a pantalla completa." << endl;
+                            }
+#                            ifdef DEB
+                            cout << "main>Cambio del estado de pantalla completa" << endl;
+#                            endif
+                        } else {
+                            controlador->tecla_pulsada(evento.key.keysym.sym);
+                        }
+                        break;
+                    case SDL_QUIT:
+#                        ifdef DEB
+                        cout << "main>Cerrado por ventana" << endl;
+#                        endif
+                        game = false;
+                        break;
+                }
+            }
+            tiempo_ev = SDL_GetTicks();
+        }
+    }
+#    ifdef DEB
+    cout << "main>Liberando Controlador." << endl;
+#    endif
+    delete controlador;
+    SDL_FreeSurface(icono);
+    SDL_FreeSurface(pantalla);
+    exit(EXIT_SUCCESS);
+}

@@ -1,0 +1,75 @@
+
+#include "Boton.h"
+
+Boton::Boton(int v, const char *bi, const char *ba, int bx, int by) {
+	valor = v;
+	BotonInactivo = IMG_Load(bi);
+	BotonActivo = IMG_Load(ba);
+	x = bx;
+	y = by;
+	//ratonEncima = false;
+	//repintarInac = true;
+	//repintarAct = false;
+	activo = true;
+}
+
+Boton::~Boton() {
+	SDL_FreeSurface(BotonInactivo);
+	SDL_FreeSurface(BotonActivo);
+}
+
+bool Boton::encima(Uint16 rx, Uint16 ry) {
+	bool ret;
+	ret = (rx > x && rx < (x + BotonInactivo->w) &&
+	    ry > y && y < (y + BotonInactivo->h));
+	return ret;
+}
+
+int Boton::diValor() {
+	return valor;
+}
+
+void Boton::modX(Uint16 x) {
+	bx = x;
+}
+
+void Boton::modY(Uint16 y) {
+	by = y;
+}
+
+void Boton::activar() {
+	activo = true;
+}
+
+void Boton::desactivar() {
+	activo = false;
+}
+
+/*void Boton::repintar() {
+	ratonEncima = false;
+}*/
+
+void Boton::PintarBoton(SDL_Surface *p, Uint16 rx, Uint16 ry) {
+	SDL_Rect dest; // Destino de la imagen en la pantalla	
+	dest.x = bx;
+	dest.y = by;
+	dest.w = BotonInactivo->w;
+	dest.h = BotonInactivo->h;
+	
+	// solo se verá si está activado
+	if (activo) {
+		// Comprobamos si el ratón está sobre el botón
+		if (encima(rx, ry)) {
+			//if (repintarAct && !repintarInac) { // Evita que se repinte continuamente
+				SDL_BlitSurface(BotonActivo,NULL,p, &dest);
+			//}
+		} else {
+			//if (repintarInac && !repintarAct) { // Evita que se repinte continuamente
+				SDL_BlitSurface(BotonInactivo,NULL,p, &dest);
+			//}
+		}
+	} else {
+		SDL_BlitSurface(BotonInactivo,NULL,p, &dest);	
+	}
+}
+

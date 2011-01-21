@@ -1,0 +1,32 @@
+#ifndef _BOTON_H_
+#define _BOTON_H_
+
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+
+class Boton {
+	private:		
+		SDL_Surface *BotonInactivo; // Imagen del Boton activo
+		SDL_Surface *BotonActivo;   // Imagen del Boton inactivo
+		// Se usa para saber a qué estado lleva el botón
+		int valor;
+		// Coordenadas del Boton en la pantalla
+		int x, y;
+		// Hace que no haya que redibujar los Botones si estamos todavía en dicha opción
+		bool activo;
+	public:
+		Boton(int v, const char *bi, const char *ba, int x, int y);
+		~Boton();
+
+		bool encima(Uint16 rx, Uint16 ry);
+		int diValor();
+		void ponX(Uint16 x);
+		void ponY(Uint16 y);
+		void activar();
+		void desactivar();
+		//void repintar();
+		// Pone el Boton en pantalla teniendo en cuenta si está el ratón sobre él
+		void PintarBoton(SDL_Surface *p, Uint16 rx, Uint16 ry);
+};
+
+#endif

@@ -1,0 +1,46 @@
+/* 
+ * File:   dibujante.h
+ * Author: guillermo
+ *
+ * Created on 25 de marzo de 2009, 18:30
+ */
+
+#include "dibujante.h"
+
+Dibujante::Dibujante(SDL_Surface *p) {
+    pantalla = p;
+}
+
+Dibujante::Dibujante(const Dibujante& orig) { }
+
+Dibujante::~Dibujante() {
+#    ifdef DEB
+    cout << "dibujante>Liberando dibujante" << endl;
+#    endif
+}
+
+void Dibujante::dibujar(Tanque* t) {
+    if (t != NULL) {
+        t->dibujate(pantalla);
+    } else {
+#        ifdef DEB
+        cout << "No se puede dibujar: Puntero Nulo" << endl;
+#        endif
+    }
+}
+
+void Dibujante::dibujar(Bala* b) {
+    if (b != NULL) {
+        b->dibujate(pantalla);
+    }
+#        ifdef DEB 
+    else {
+        cout << "No se puede dibujar: Puntero Nulo" << endl;
+    }
+#        endif
+
+}
+
+void Dibujante::dibujar(SDL_Surface * s, SDL_Rect* corte_pantalla, SDL_Rect* corte_s) {
+    SDL_BlitSurface(s, corte_s, pantalla, corte_pantalla);
+}

@@ -1,0 +1,41 @@
+/* 
+ * File:   Control.h
+ * Author: guillermo
+ *
+ * Created on 5 de abril de 2009, 16:45
+ */
+
+#ifndef _CONTROL_H
+#define	_CONTROL_H
+#ifdef DEB
+#include <iostream>
+using namespace std;
+#endif
+#include <SDL/SDL.h>
+#include "dibujante.h"
+#include "tanque.h"
+#include "bala.h"
+
+class Control {
+public:
+    Control(SDL_Surface *p, Tanque* &j, Uint16 jx, Uint16 jy, Tanque* &e, Uint16 ex, Uint16 ey);
+    Control(const Control& orig);
+    virtual ~Control();
+    void tecla_pulsada(SDLKey tecla);
+    void tecla_libre(SDLKey tecla);
+    void movimiento();
+
+    void colisiones();
+    void pintadas();
+private:
+    static const int nTecArr = 5;
+    bool arrTeclas[nTecArr];
+    SDL_Surface *pantalla, *fondo;
+    //Punteros a los objetos que controla
+    Dibujante *pincel;
+    Tanque *jugador, *enemigo;
+    Bala *bal;
+};
+
+#endif	/* _CONTROL_H */
+

@@ -1,0 +1,141 @@
+/* 
+ * File:   tanque.cpp
+ * Author: guillermo
+ *
+ * Created on 25 de marzo de 2009, 18:19
+ */
+
+
+#include "tanque.h"
+
+Tanque::Tanque(int j, Uint16 lax, Uint16 lay, SDL_Surface *pantalla) {
+    img_fil = j;
+    img_col = 0;
+    img = IMG_Load("tanque.png");
+    img = SDL_DisplayFormat(img);
+    Uint32 colorkey = SDL_MapRGB(pantalla->format, 0, 0xFF, 0);
+    SDL_SetColorKey(img, SDL_SRCCOLORKEY | SDL_RLEACCEL, colorkey);
+    corte.h = corte.w = 40;
+    corte.x = 40 * img_col;
+    corte.y = 40 * img_fil;
+    x = lax;
+    y = lay;
+    dx = dy = mov;
+    orient = ARR;
+}
+
+Tanque::Tanque(const Tanque& orig) { }
+
+Tanque::~Tanque() {
+#    ifdef DEB
+    cout << "tanque>Liberando tanque" << endl;
+#    endif
+    SDL_FreeSurface(img);
+
+}
+
+void Tanque::dibujate(SDL_Surface *pantalla) {
+    switch (orient) {
+        case ARR:
+            img_col = 0;
+            break;
+        case DER:
+            img_col = 1;
+            break;
+        case ABA:
+            img_col = 2;
+            break;
+        case IZQ:
+            img_col = 3;
+            break;
+    }
+    SDL_Rect sitio;
+    corte.x = 40 * img_col;
+    corte.y = 40 * img_fil;
+    sitio.x = x;
+    sitio.y = y;
+    sitio.h = sitio.w = 40;
+    SDL_BlitSurface(this->img, &corte, pantalla, &sitio);
+}
+
+bool Tanque::colision(Tanque *t) {
+    bool ret = false;
+    //Uint8 vert =
+    return ret;
+}
+
+bool Tanque::dentro_tabl(Orientacion ori) {
+    bool ret = false;
+    switch (ori) {
+        case ARR:
+            if ((y - dy) > LIMIY) {
+                ret = true;
+            }
+            break;
+        case DER:
+            if ((x + dx) < LIMSX) {
+                ret = true;
+            }
+            break;
+        case ABA:
+            if ((y + dy) < LIMSY) {
+                ret = true;
+            }
+            break;
+        case IZQ:
+            if ((x - dx) > LIMIX) {
+                ret = true;
+            }
+            break;
+    }
+    return ret;
+}
+
+void Tanque::ve_arr() {
+    y -= dy;
+}
+
+void Tanque::ve_aba() {
+    y += dy;
+}
+
+void Tanque::ve_izq() {
+    x -= dx;
+}
+
+void Tanque::ve_der() {
+    x += dx;
+}
+
+void Tanque::mira_arr() {
+    orient = ARR;
+}
+
+void Tanque::mira_aba() {
+    orient = ABA;
+}
+
+void Tanque::mira_izq() {
+    orient = IZQ;
+}
+
+void Tanque::mira_der() {
+    orient = DER;
+}
+
+Sint16 Tanque::diX() {
+    return x;
+}
+
+Sint16 Tanque::diY() {
+    return y;
+}
+Orientacion Tanque::diOr(){
+    return orient;
+}
+void Tanque::destruir(){
+#    ifdef DEB
+    cout << "\ttanque>Destruido!" << endl;
+#    endif
+}
+

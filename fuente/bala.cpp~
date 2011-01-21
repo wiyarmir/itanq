@@ -1,0 +1,102 @@
+/* 
+ * File:   bala.cpp
+ * Author: guillermo
+ *
+ * Created on 25 de marzo de 2009, 18:28
+ */
+
+#include <SDL/SDL_video.h>
+
+#include "bala.h"
+#include "tanque.h"
+
+Bala::Bala(Uint16 lax, Uint16 lay, SDL_Surface *pantalla, Orientacion ori) {
+#    ifdef DEB
+    cout << "\tbala>Creando bala" << endl;
+#    endif
+    Uint16 vTemp = 5;
+    img_fil = 0;
+    img_col = 0;
+    img = IMG_Load("bala.png");
+    img = SDL_DisplayFormat(img);
+    Uint32 colorkey = SDL_MapRGB(pantalla->format, 0, 0xFF, 0);
+    SDL_SetColorKey(img, SDL_SRCCOLORKEY | SDL_RLEACCEL, colorkey);
+    x = lax;
+    y = lay;
+    dx = dy = 0;
+    switch (ori) {
+        case ARR:dy = -vTemp;
+            break;
+        case ABA:dy = vTemp;
+            break;
+        case IZQ:dx = -vTemp;
+            break;
+        case DER:dx = vTemp;
+            break;
+    }
+    orient = ori;
+}
+
+Bala::Bala(const Bala& orig) { }
+
+Bala::~Bala() {
+#    ifdef DEB
+    cout << "\tbala>Liberando bala" << endl;
+#    endif
+    SDL_FreeSurface(img);
+}
+
+Sint16 Bala::diX() {
+    return x;
+}
+
+Sint16 Bala::diY() {
+    return y;
+}
+
+Orientacion Bala::diOr() {
+    return orient;
+}
+
+void Bala::dibujate(SDL_Surface *pantalla) {
+    switch (orient) {
+        case ARR:
+            img_col = 0;
+            break;
+        case ABA:
+            img_col = 1;
+            break;
+        case IZQ:
+            img_col = 2;
+            break;
+        case DER:
+            img_col = 3;
+            break;
+    }
+
+    SDL_Rect corte;
+    corte.h = BH;
+    corte.w = BW;
+    corte.x = corte.w * img_col;
+    corte.y = corte.h * img_fil;
+    SDL_Rect sitio;
+    sitio.x = x;
+    sitio.y = y;
+    sitio.h = BH;
+    sitio.w = BW;
+    SDL_BlitSurface(this->img, &corte, pantalla, &sitio);
+}
+
+void Bala::mov() {
+    x += dx;
+    y += dy;
+}
+
+bool Bala::colision(Tanque* t) {
+    bool col = false;
+
+    if ((t->diX() + 40 > this->x) && (t->diX() < this->x) && (this->y < t->diY() + 40) && (this->y > t->diY())) {
+        col = true;
+    }
+    return col;
+}
